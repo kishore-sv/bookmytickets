@@ -16,27 +16,40 @@ export const cinemasTable = pgTable("cinemas", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const showsTable = pgTable("shows", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  cinemaId: integer("cinema_id")
+// export const showsTable = pgTable("shows", {
+//   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+//   cinemaId: integer("cinema_id")
+//     .notNull()
+//     .references(() => cinemasTable.id, { onDelete: "cascade" }),
+
+//   showTime: time("show_time").notNull(), // 10:00, 15:30, 19:00
+//   availableSeats: integer("available_seats").notNull(),
+
+//   createdAt: timestamp("created_at").defaultNow(),
+// });
+
+// export const bookingsTable = pgTable("bookings", {
+//   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+
+//   showId: integer("show_id")
+//     .notNull()
+//     .references(() => showsTable.id, { onDelete: "cascade" }),
+
+//   userName: varchar("user_name", { length: 255 }).notNull(),
+//   ticketsBooked: integer("tickets_booked").notNull(),
+
+//   bookedAt: timestamp("booked_at").defaultNow(),
+// });
+
+
+export const showsTable=pgTable("shows",{
+   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+   cinemaId: integer("cinema_id")
     .notNull()
     .references(() => cinemasTable.id, { onDelete: "cascade" }),
+    showTime: time("show_time").notNull(),
+    availableSeats: integer("available_seats").notNull(),
+    totalSeats: integer("total_seats").notNull(),
 
-  showTime: time("show_time").notNull(), // 10:00, 15:30, 19:00
-  availableSeats: integer("available_seats").notNull(),
-
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const bookingsTable = pgTable("bookings", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-
-  showId: integer("show_id")
-    .notNull()
-    .references(() => showsTable.id, { onDelete: "cascade" }),
-
-  userName: varchar("user_name", { length: 255 }).notNull(),
-  ticketsBooked: integer("tickets_booked").notNull(),
-
-  bookedAt: timestamp("booked_at").defaultNow(),
-});
+    createdAt: timestamp("created_at").defaultNow(),
+})
