@@ -28,3 +28,13 @@ export const showsTable = pgTable("shows", {
 
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const bookingsTable = pgTable("bookings", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  showId: integer("show_id")
+    .notNull()
+    .references(() => showsTable.id, { onDelete: "cascade" }),
+  email: varchar("email", { length: 255 }).notNull(),
+  ticketsBooked: integer("tickets_booked").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
