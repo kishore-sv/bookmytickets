@@ -1,36 +1,38 @@
-import { integer, pgTable, varchar, time, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, timestamp, unique } from "drizzle-orm/pg-core";
 
 export const usersTable = pgTable("users", {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    name: varchar({ length: 255 }).notNull(),
-    age: integer().notNull(),
-    email: varchar({ length: 255 }).notNull().unique(),
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  age: integer().notNull(),
+  email: varchar({ length: 255 }).notNull().unique(),
 });
 
-export const cinemasTable=pgTable("cinemas",{
-  id:integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name:varchar("name",{length:255}).notNull(),
-  location:varchar("location",{length:255}).notNull(),
-  createdAt:timestamp("created_at").defaultNow()
+export const cinemasTable = pgTable("cinemas", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar("name", { length: 255 }).notNull(),
+  location: varchar("location", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
 })
 
-export const showsTable=pgTable("shows",{
-  id:integer("id").primaryKey().generatedAlwaysAsIdentity(),
+export const showsTable = pgTable("shows", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 
-  cinemaId:integer("cinema_id").notNull().references(()=>cinemasTable.id,{onDelete:"cascade"}),
-  totalSeats:integer("total_seats").notNull(),
-  availableSeats:integer("available_seats").notNull(),
+  cinemaId: integer("cinema_id").notNull().references(() => cinemasTable.id, { onDelete: "cascade" }),
+  totalSeats: integer("total_seats").notNull(),
+  availableSeats: integer("available_seats").notNull(),
 
   createdAt: timestamp("created_at").defaultNow(),
 })
 
-export const bookedSeats=pgTable("booked_seats",{
-  id:integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  amount:integer("amount").notNull(),
-  seatRow:varchar("seat_row").notNull(),
-  seatCol:varchar("seat_col").notNull(),
-  showId:integer("show_id").notNull().references(()=>showsTable.id,{onDelete:"cascade"})
-})
+export const bookedSeats = pgTable("booked_seats", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  amount: integer("amount").notNull(),
+  seatRow: varchar("seat_row").notNull(),
+  seatCol: varchar("seat_col").notNull(),
+  showId: integer("show_id").notNull().references(() => showsTable.id, { onDelete: "cascade" })
+}, (table) => ({
+  uniqueSeat: unique().on(table.showId, table.seatRow, table.seatCol)
+}))
 
 
 // export const cinemasTable = pgTable("cinemas", {
