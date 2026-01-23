@@ -1,57 +1,17 @@
 import { db } from "@/app/db";
-import { cinemasTable, showsTable } from "@/app/db/schema";
-import { NextResponse } from "next/server";
+import { bookedSeats, cinemasTable, showsTable } from "@/app/db/schema";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
-    const cinemasInput = [
-      {
-        name: "INOX: Garuda",
-        location: "Bengaluru",
-        totalSeats: 200,
-      },
-      {
-        name: "PVR: Garuda",
-        location: "Bengaluru",
-        totalSeats: 180,
-      },
-    ];
+    const { amount, seatRow, seatCol, showId } = await req.json();
 
-    const cinemas = await db
-      .insert(cinemasTable)
-      .values(cinemasInput)
-      .returning();
+    console.log(amount, seatRow, seatCol, showId)
 
-    const showTimes = ["10:00", "13:30", "17:00", "21:00"];
+    const seatBooked=await db.insert(bookedSeats).values({amount, seatRow, seatCol, showId}).returning()
 
-    const shows = cinemas.flatMap((cinema) =>
-      showTimes.map((time) => ({
-        cinemaId: cinema.id,
-        showTime: time,
-        totalSeats: cinema.totalSeats,
-        availableSeats: cinema.totalSeats,
-      }))
-    );
-
-    const insertedShows = await db
-      .insert(showsTable)
-      .values(shows)
-      .returning();
-
-    return NextResponse.json(
-      {
-        success: true,
-        cinemas,
-        shows: insertedShows,
-      },
-      { status: 201 }
-    );
+    return NextResponse.json(seatBooked)
   } catch (error) {
-    console.error("Seed error:", error);
-
-    return NextResponse.json(
-      { success: false, message: "Seeding failed" },
-      { status: 500 }
-    );
+    return NextResponse.json(error)
   }
 }

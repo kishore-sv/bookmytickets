@@ -7,34 +7,60 @@ export const usersTable = pgTable("users", {
     email: varchar({ length: 255 }).notNull().unique(),
 });
 
-export const cinemasTable = pgTable("cinemas", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 255 }).notNull(),
-  location: varchar("location", { length: 255 }).notNull(),
-  totalSeats: integer("total_seats").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+export const cinemasTable=pgTable("cinemas",{
+  id:integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  name:varchar("name",{length:255}).notNull(),
+  location:varchar("location",{length:255}).notNull(),
+  createdAt:timestamp("created_at").defaultNow()
+})
 
-export const showsTable = pgTable("shows", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+export const showsTable=pgTable("shows",{
+  id:integer("id").primaryKey().generatedAlwaysAsIdentity(),
 
-  cinemaId: integer("cinema_id")
-    .notNull()
-    .references(() => cinemasTable.id, { onDelete: "cascade" }),
-
-  showTime: time("show_time").notNull(),
-  availableSeats: integer("available_seats").notNull(),
-  totalSeats: integer("total_seats").notNull(),
+  cinemaId:integer("cinema_id").notNull().references(()=>cinemasTable.id,{onDelete:"cascade"}),
+  totalSeats:integer("total_seats").notNull(),
+  availableSeats:integer("available_seats").notNull(),
 
   createdAt: timestamp("created_at").defaultNow(),
-});
+})
 
-export const bookingsTable = pgTable("bookings", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  showId: integer("show_id")
-    .notNull()
-    .references(() => showsTable.id, { onDelete: "cascade" }),
-  email: varchar("email", { length: 255 }).notNull(),
-  ticketsBooked: integer("tickets_booked").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
+export const bookedSeats=pgTable("booked_seats",{
+  id:integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  amount:integer("amount").notNull(),
+  seatRow:varchar("seat_row").notNull(),
+  seatCol:varchar("seat_col").notNull(),
+  showId:integer("show_id").notNull().references(()=>showsTable.id,{onDelete:"cascade"})
+})
+
+
+// export const cinemasTable = pgTable("cinemas", {
+//   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+//   name: varchar("name", { length: 255 }).notNull(),
+//   location: varchar("location", { length: 255 }).notNull(),
+//   totalSeats: integer("total_seats").notNull(),
+//   createdAt: timestamp("created_at").defaultNow(),
+// });
+
+// export const showsTable = pgTable("shows", {
+//   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+
+//   cinemaId: integer("cinema_id")
+//     .notNull()
+//     .references(() => cinemasTable.id, { onDelete: "cascade" }),
+
+//   showTime: time("show_time").notNull(),
+//   availableSeats: integer("available_seats").notNull(),
+//   totalSeats: integer("total_seats").notNull(),
+
+//   createdAt: timestamp("created_at").defaultNow(),
+// });
+
+// export const bookingsTable = pgTable("bookings", {
+//   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+//   showId: integer("show_id")
+//     .notNull()
+//     .references(() => showsTable.id, { onDelete: "cascade" }),
+//   email: varchar("email", { length: 255 }).notNull(),
+//   ticketsBooked: integer("tickets_booked").notNull(),
+//   createdAt: timestamp("created_at").defaultNow(),
+// });
